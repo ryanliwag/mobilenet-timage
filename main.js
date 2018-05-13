@@ -1,11 +1,17 @@
 import * as tf from '@tensorflow/tfjs';
 
 var webcamStream;
-
 class Main {
-  constructor() {
-
+    constructor() {
     // Initialize buttons
+    var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
+    var imageObj = new Image();
+
+    imageObj.onload = function() {
+      context.drawImage(imageObj, 69, 50);
+    };
+    imageObj.src = 'goldfish.jpeg';
     this.open_cam = document.getElementById('open-webcam');
     this.open_cam.onclick = () => this.use_webcam();
     this.cap_cam = document.getElementById('capture-stream');
@@ -20,7 +26,7 @@ class Main {
  
     tf.loadModel('model/model.json').then((model) => {
       this.model = model;
-      this.updateInputTensor();
+      
     });
   }
 
@@ -34,9 +40,8 @@ class Main {
       });
      }
   }
-
+  
   snapshot() {
-
     var canvas, ctx;
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext('2d');
@@ -61,8 +66,6 @@ class Main {
     document.getElementById('video_loader').appendChild(video);
   }
 
-
-
   classify_model(canvas) {
     canvas = document.getElementById("myCanvas");
     canvas.width="224";
@@ -76,9 +79,6 @@ class Main {
     );
     console.log(this.inputTensor.print)
     this.runmodel();
-    
-
-
   }
 
   //call image net json file

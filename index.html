@@ -39,20 +39,6 @@ html, body {
     text-align: center;
 }
 </style>
-
-<script>
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            $('#blah')
-                .attr('src', e.target.result)
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-</script>
 <body>
     <div class="page-wrap">
         <div class="container">
@@ -72,8 +58,7 @@ function readURL(input) {
                 <div class="column" style="display:flex;justify-content:center;align-items:center;">
                     <figure style="align-items: center">
                         <center id="video_loader"></center>
-                        <img id="img" src="goldfish.jpeg" alt="your image"/>
-                        <canvas  id="myCanvas" width="400" height="400"></canvas> 
+                        <canvas  id="myCanvas"></canvas> 
                         <figcaption>Input Image</figcaption>
                     </figure>
                 </div>
@@ -85,7 +70,7 @@ function readURL(input) {
             </div>
             <div class="row">
             	<div class="column" style="display:flex;justify-content:center;align-items:center;">
-            	<a>Result: </a> <a id="result"></a>
+                    <a>Result: </a> <a id="result"></a>
             	</div>
        		</div>
        		<div class="row">
@@ -98,11 +83,6 @@ function readURL(input) {
        		</div>
     </div>
     <footer class="site-footer">
-        <p>
-            <em>
-                <a>Built using tensorflow.js and Model trained on Keras</a>. 
-            </em>
-        </p>
     </footer>
 </body>
 </html>

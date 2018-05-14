@@ -4,14 +4,8 @@ var webcamStream;
 class Main {
     constructor() {
     // Initialize buttons
-    var canvas = document.getElementById('myCanvas');
-    var context = canvas.getContext('2d');
-    var imageObj = new Image();
+    this.initialize_image();
 
-    imageObj.onload = function() {
-      context.drawImage(imageObj, 69, 50);
-    };
-    imageObj.src = 'goldfish.jpeg';
     this.open_cam = document.getElementById('open-webcam');
     this.open_cam.onclick = () => this.use_webcam();
     this.cap_cam = document.getElementById('capture-stream');
@@ -19,15 +13,19 @@ class Main {
     this.classify_img = document.getElementById('classify');
     this.classify_img.onclick = () => this.classify_model();
 
-    $.getJSON("imagenet_class_index.json", function(json) {
-      console.log(json[2][1]); // this will show the info it in firebug console
-    });
-
- 
     tf.loadModel('model/model.json').then((model) => {
       this.model = model;
-      
     });
+  }
+
+  initialize_image() {
+    var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
+    var imageObj = new Image();
+    imageObj.onload = function() {
+      context.drawImage(imageObj,0, 0);
+    };
+    imageObj.src = 'goldfish.jpeg';
   }
 
   use_webcam() {
@@ -67,26 +65,18 @@ class Main {
   }
 
   classify_model(canvas) {
-    canvas = document.getElementById("myCanvas");
-    canvas.width="224";
-    canvas.height="224";
-
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext('2d');
+    var imgData=ctx.getImageData(0,0,224,224);
     if (this.inputTensor) {
       this.inputTensor.dispose();
     }
     this.inputTensor = tf.tidy(() =>
-      tf.fromPixels(canvas).toFloat().div(tf.scalar(255))
+      tf.fromPixels(imgData).toFloat().div(tf.scalar(255))
     );
     console.log(this.inputTensor.print)
     this.runmodel();
   }
-
-  //call image net json file
-  trigger_search(query) {
-         var JSElement = document.createElement('script');
-         JSElement.src = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyCUwXHx7yvicNW3tAI-NAu47cKjN_4LFZ8&cx=001792966700025164735:8xnzg1hpiuc&q='+query+'&callback=hndlr';
-         document.getElementsByTagName('body')[0].appendChild(JSElement);
-    }
 
   runmodel() {
     const limit = tf.tensor1d([0.5]);
@@ -95,9 +85,11 @@ class Main {
     var value = prediction.argMax(1).dataSync()
     console.log(prediction.reshape([1000]).dataSync()[value[0]])
     console.log(value[0])
+
+    $.getJSON("imagenet_class_index.json", function(json) {
+      document.getElementById('result').innerHTML = json[value[0]][1]; 
+    });
   }
-
-
 }
 
 window.addEventListener('load', () => new Main());
